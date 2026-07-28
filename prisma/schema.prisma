@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model jabatan {
+  id      Int    @id @default(autoincrement())
+  jabatan String @db.VarChar(50)
+}
+
+model ketidakhadiran {
+  id               Int      @id @default(autoincrement())
+  id_pegawai       Int
+  keterangan       String   @db.VarChar(50)
+  tanggal          DateTime @db.Date
+  deskripsi        String   @db.Text
+  file             String   @db.VarChar(255)
+  status_pengajuan String   @db.VarChar(20)
+}
+
+model lokasi_presensi {
+  id            Int      @id @default(autoincrement())
+  nama_lokasi   String   @db.VarChar(255)
+  alamat_lokasi String   @db.Text
+  tipe_lokasi   String   @db.VarChar(50)
+  latitude      String   @db.VarChar(255)
+  longitude     String   @db.VarChar(255)
+  radius        Int
+  zona_waktu    String   @db.VarChar(10)
+  jam_masuk     DateTime @db.Time(0)
+  jam_pulang    DateTime @db.Time(0)
+}
+
+model pegawai {
+  id              Int     @id @default(autoincrement())
+  nip             String  @db.VarChar(50)
+  nama            String  @db.VarChar(255)
+  jenis_kelamin   String  @db.VarChar(20)
+  alamat          String  @db.Text
+  no_handphone    String  @db.VarChar(20)
+  jabatan         String  @db.VarChar(255)
+  lokasi_presensi String  @db.VarChar(255)
+  foto            String  @db.VarChar(255)
+  users           users[]
+}
+
+model presensi {
+  id             Int       @id @default(autoincrement())
+  id_pegawai     Int
+  tanggal_masuk  DateTime  @db.Date
+  jam_masuk      DateTime  @db.Time(0)
+  foto_masuk     String    @db.VarChar(255)
+  tanggal_keluar DateTime? @db.Date
+  jam_keluar     DateTime? @db.Time(0)
+  foto_keluar    String?   @db.VarChar(255)
+}
+
+model users {
+  id         Int     @id @default(autoincrement())
+  id_pegawai Int
+  username   String  @db.VarChar(255)
+  password   String  @db.VarChar(255)
+  status     String  @db.VarChar(20)
+  role       String  @db.VarChar(20)
+  pegawai    pegawai @relation(fields: [id_pegawai], references: [id], onDelete: Cascade, map: "users_ibfk_1")
+
+  @@index([id_pegawai], map: "id_pegawai")
+}
