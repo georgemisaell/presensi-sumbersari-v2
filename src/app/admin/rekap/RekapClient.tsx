@@ -13,7 +13,11 @@ export interface RekapData {
   tanggal_masuk: string;
   jam_masuk: string;
   jam_keluar: string | null;
-  status: string; // Hadir, Terlambat, dll (bisa dihitung nanti)
+  foto_masuk: string | null;
+  foto_keluar: string | null;
+  total_jam: string | null;
+  total_terlambat: number;
+  status: string; // Hadir, Terlambat, dll
 }
 
 export default function RekapClient({ data, initialMulai, initialSampai }: { data: RekapData[], initialMulai: string, initialSampai: string }) {
@@ -69,7 +73,7 @@ export default function RekapClient({ data, initialMulai, initialSampai }: { dat
                   type="date" 
                   value={mulai}
                   onChange={e => setMulai(e.target.value)}
-                  className="pl-9 pr-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white"
+                  className="pl-9 pr-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white text-slate-800"
                 />
               </div>
             </div>
@@ -82,7 +86,7 @@ export default function RekapClient({ data, initialMulai, initialSampai }: { dat
                   type="date" 
                   value={sampai}
                   onChange={e => setSampai(e.target.value)}
-                  className="pl-9 pr-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white"
+                  className="pl-9 pr-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white text-slate-800"
                 />
               </div>
             </div>
@@ -105,7 +109,11 @@ export default function RekapClient({ data, initialMulai, initialSampai }: { dat
                 <th className="p-4 font-semibold">Nama Pegawai</th>
                 <th className="p-4 font-semibold text-center">Tanggal</th>
                 <th className="p-4 font-semibold text-center">Jam Masuk</th>
+                <th className="p-4 font-semibold text-center">Foto In</th>
                 <th className="p-4 font-semibold text-center">Jam Keluar</th>
+                <th className="p-4 font-semibold text-center">Foto Out</th>
+                <th className="p-4 font-semibold text-center">Total Jam</th>
+                <th className="p-4 font-semibold text-center">Keterlambatan</th>
                 <th className="p-4 font-semibold text-center print:hidden">Status</th>
               </tr>
             </thead>
@@ -131,14 +139,48 @@ export default function RekapClient({ data, initialMulai, initialSampai }: { dat
                       <span className="bg-emerald-50 text-emerald-700 px-2 py-1 rounded font-mono text-sm border border-emerald-100">{item.jam_masuk}</span>
                     </td>
                     <td className="p-4 text-center">
+                      {item.foto_masuk ? (
+                        <a href={`/uploads/presensi/${item.foto_masuk}`} target="_blank" rel="noopener noreferrer">
+                          <img src={`/uploads/presensi/${item.foto_masuk}`} alt="Foto In" className="w-10 h-10 object-cover rounded-lg mx-auto border border-slate-200 hover:scale-110 transition-transform cursor-pointer" />
+                        </a>
+                      ) : (
+                        <span className="text-slate-400 italic text-xs">-</span>
+                      )}
+                    </td>
+                    <td className="p-4 text-center">
                       {item.jam_keluar ? (
                         <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded font-mono text-sm border border-blue-100">{item.jam_keluar}</span>
                       ) : (
                         <span className="text-slate-400 italic text-sm">-</span>
                       )}
                     </td>
+                    <td className="p-4 text-center">
+                      {item.foto_keluar ? (
+                        <a href={`/uploads/presensi/${item.foto_keluar}`} target="_blank" rel="noopener noreferrer">
+                          <img src={`/uploads/presensi/${item.foto_keluar}`} alt="Foto Out" className="w-10 h-10 object-cover rounded-lg mx-auto border border-slate-200 hover:scale-110 transition-transform cursor-pointer" />
+                        </a>
+                      ) : (
+                        <span className="text-slate-400 italic text-xs">-</span>
+                      )}
+                    </td>
+                    <td className="p-4 text-center font-medium text-slate-700">
+                      {item.total_jam || <span className="text-slate-400 italic text-xs">-</span>}
+                    </td>
+                    <td className="p-4 text-center font-medium">
+                      {item.total_terlambat > 0 ? (
+                        <span className="text-rose-600">{item.total_terlambat} mnt</span>
+                      ) : (
+                        <span className="text-emerald-600">Tepat Waktu</span>
+                      )}
+                    </td>
                     <td className="p-4 text-center print:hidden">
-                      <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold">Hadir</span>
+                      <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                        item.status === 'Terlambat' 
+                          ? 'bg-rose-100 text-rose-700' 
+                          : 'bg-emerald-100 text-emerald-700'
+                      }`}>
+                        {item.status}
+                      </span>
                     </td>
                   </tr>
                 ))

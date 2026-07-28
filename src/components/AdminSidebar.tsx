@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LogOut, MapPin, Users, FileText, Briefcase, Menu, X, Map } from 'lucide-react';
+import { LogOut, MapPin, Users, FileText, Briefcase, Menu, X, Map, LayoutDashboard, ChevronDown, Database } from 'lucide-react';
 
 interface AdminSidebarProps {
   user: any;
@@ -12,6 +12,11 @@ interface AdminSidebarProps {
 export default function AdminSidebar({ user }: AdminSidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  
+  // Auto open Data Master if we are in one of its subpages
+  const [isDataMasterOpen, setIsDataMasterOpen] = useState(
+    pathname.startsWith('/admin/jabatan') || pathname.startsWith('/admin/lokasi')
+  );
 
   // Close sidebar on route change on mobile
   useEffect(() => {
@@ -19,10 +24,16 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
   }, [pathname]);
 
   const navItems = [
-    { name: 'Dashboard', href: '/admin/home', icon: <MapPin className="w-5 h-5" /> },
+    { name: 'Dashboard', href: '/admin/home', icon: <LayoutDashboard className="w-5 h-5" /> },
     { name: 'Pegawai', href: '/admin/pegawai', icon: <Users className="w-5 h-5" /> },
-    { name: 'Jabatan', href: '/admin/jabatan', icon: <Briefcase className="w-5 h-5" /> },
-    { name: 'Lokasi Presensi', href: '/admin/lokasi', icon: <Map className="w-5 h-5" /> },
+    { 
+      name: 'Data Master', 
+      icon: <Database className="w-5 h-5" />,
+      subItems: [
+        { name: 'Jabatan', href: '/admin/jabatan', icon: <Briefcase className="w-4 h-4" /> },
+        { name: 'Lokasi Presensi', href: '/admin/lokasi', icon: <Map className="w-4 h-4" /> },
+      ]
+    },
     { name: 'Ketidakhadiran', href: '/admin/ketidakhadiran', icon: <FileText className="w-5 h-5" /> },
     { name: 'Rekap Absen', href: '/admin/rekap', icon: <FileText className="w-5 h-5" /> },
   ];
@@ -73,11 +84,47 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
         <nav className="flex-1 p-4 flex flex-col gap-2 overflow-y-auto">
           <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 mt-4 px-2">Menu Utama</div>
           {navItems.map((item) => {
-            const isActive = pathname.startsWith(item.href);
+            if (item.subItems) {
+              const isChildActive = pathname.startsWith('/admin/jabatan') || pathname.startsWith('/admin/lokasi');
+              return (
+                <div key={item.name} className="flex flex-col gap-1">
+                  <button 
+                    onClick={() => setIsDataMasterOpen(!isDataMasterOpen)}
+                    className={`flex items-center justify-between px-4 py-3 rounded-xl transition-colors w-full text-left ${isChildActive && !isDataMasterOpen ? 'text-white' : 'text-slate-300 hover:text-white hover:bg-slate-800'}`}
+                  >
+                    <div className="flex items-center gap-3">
+                      {item.icon}
+                      <span className="font-medium">{item.name}</span>
+                    </div>
+                    <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isDataMasterOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  
+                  {isDataMasterOpen && (
+                    <div className="flex flex-col gap-1 ml-4 border-l border-slate-700 pl-2 mt-1">
+                      {item.subItems.map(subItem => {
+                        const isActive = pathname.startsWith(subItem.href);
+                        return (
+                          <Link 
+                            key={subItem.name} 
+                            href={subItem.href} 
+                            className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-colors text-sm ${isActive ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}
+                          >
+                            {subItem.icon}
+                            <span className="font-medium">{subItem.name}</span>
+                          </Link>
+                        )
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+            const isActive = pathname.startsWith(item.href!);
             return (
               <Link 
                 key={item.name} 
-                href={item.href} 
+                href={item.href!} 
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${isActive ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'text-slate-300 hover:text-white hover:bg-slate-800'}`}
               >
                 {item.icon}
