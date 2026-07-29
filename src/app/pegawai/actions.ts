@@ -3,8 +3,7 @@
 import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
+import { uploadToSupabase } from '@/lib/supabase';
 import { revalidatePath } from 'next/cache';
 
 export async function submitPresensiMasuk(base64Image: string) {
@@ -47,19 +46,10 @@ export async function submitPresensiMasuk(base64Image: string) {
     const base64Data = base64Image.replace(/^data:image\/\w+;base64,/, '');
     const buffer = Buffer.from(base64Data, 'base64');
     
-    const uploadDir = join(process.cwd(), 'public', 'uploads', 'presensi');
-    
-    // Create directory if not exists
-    try {
-      await mkdir(uploadDir, { recursive: true });
-    } catch (err) {
-      // ignore exists error
-    }
-
     const fileName = `masuk_${idPegawai}_${today.getTime()}.jpg`;
-    const filePath = join(uploadDir, fileName);
     
-    await writeFile(filePath, buffer);
+    // Upload ke Supabase
+    const publicUrl = await uploadToSupabase(buffer, fileName, 'presensi');
 
     // Save to database
     await prisma.presensi.create({
@@ -94,18 +84,9 @@ export async function submitPresensiKeluar(base64Image: string, idPresensi: numb
     const base64Data = base64Image.replace(/^data:image\/\w+;base64,/, '');
     const buffer = Buffer.from(base64Data, 'base64');
     
-    const uploadDir = join(process.cwd(), 'public', 'uploads', 'presensi');
-    
-    try {
-      await mkdir(uploadDir, { recursive: true });
-    } catch (err) {
-      // ignore
-    }
-
     const fileName = `keluar_${idPegawai}_${today.getTime()}.jpg`;
-    const filePath = join(uploadDir, fileName);
     
-    await writeFile(filePath, buffer);
+    const publicUrl = await uploadToSupabase(buffer, fileName, 'presensi');
 
     // Update database
     await prisma.presensi.update({

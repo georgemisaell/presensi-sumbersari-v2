@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Search, Download, Calendar, Filter } from 'lucide-react';
+import { getImageUrl } from '@/lib/getImageUrl';
 import { format } from 'date-fns';
 import { id as idLocale } from 'date-fns/locale';
 
@@ -140,8 +141,8 @@ export default function RekapClient({ data, initialMulai, initialSampai }: { dat
                     </td>
                     <td className="p-4 text-center">
                       {item.foto_masuk ? (
-                        <a href={`/uploads/presensi/${item.foto_masuk}`} target="_blank" rel="noopener noreferrer">
-                          <img src={`/uploads/presensi/${item.foto_masuk}`} alt="Foto In" className="w-10 h-10 object-cover rounded-lg mx-auto border border-slate-200 hover:scale-110 transition-transform cursor-pointer" />
+                        <a href={getImageUrl('presensi', item.foto_masuk)} target="_blank" rel="noopener noreferrer">
+                          <img src={getImageUrl('presensi', item.foto_masuk)} alt="Foto In" className="w-10 h-10 object-cover rounded-lg mx-auto border border-slate-200 hover:scale-110 transition-transform cursor-pointer" />
                         </a>
                       ) : (
                         <span className="text-slate-400 italic text-xs">-</span>
@@ -156,8 +157,8 @@ export default function RekapClient({ data, initialMulai, initialSampai }: { dat
                     </td>
                     <td className="p-4 text-center">
                       {item.foto_keluar ? (
-                        <a href={`/uploads/presensi/${item.foto_keluar}`} target="_blank" rel="noopener noreferrer">
-                          <img src={`/uploads/presensi/${item.foto_keluar}`} alt="Foto Out" className="w-10 h-10 object-cover rounded-lg mx-auto border border-slate-200 hover:scale-110 transition-transform cursor-pointer" />
+                        <a href={getImageUrl('presensi', item.foto_keluar)} target="_blank" rel="noopener noreferrer">
+                          <img src={getImageUrl('presensi', item.foto_keluar)} alt="Foto Out" className="w-10 h-10 object-cover rounded-lg mx-auto border border-slate-200 hover:scale-110 transition-transform cursor-pointer" />
                         </a>
                       ) : (
                         <span className="text-slate-400 italic text-xs">-</span>

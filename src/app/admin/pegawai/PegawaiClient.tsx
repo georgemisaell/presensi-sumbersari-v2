@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Plus, Trash2, X, Users, Image as ImageIcon, Edit2 } from 'lucide-react';
+import { getImageUrl } from '@/lib/getImageUrl';
 import { addPegawai, deletePegawai, updatePegawai } from './actions';
 import toast, { Toaster } from 'react-hot-toast';
 
@@ -130,7 +131,7 @@ export default function PegawaiClient({ data, listJabatan, listLokasi }: Pegawai
                       <td className="p-4">
                         <div className="flex items-center gap-3">
                           {item.foto && item.foto !== 'default.jpg' ? (
-                            <img src={`/uploads/pegawai/${item.foto}`} alt={item.nama} className="w-12 h-12 rounded-full object-cover border border-slate-200" />
+                            <img src={getImageUrl('pegawai', item.foto)} alt={item.nama} className="w-12 h-12 rounded-full object-cover border border-slate-200" />
                           ) : (
                             <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center border border-slate-200 text-slate-400">
                               <ImageIcon className="w-5 h-5" />

@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { FileText, CheckCircle, XCircle, Search, Eye, X } from 'lucide-react';
+import { Search, Calendar, FileText, CheckCircle, XCircle, Eye, X } from 'lucide-react';
+import { getImageUrl } from '@/lib/getImageUrl';
 import { updateStatusKetidakhadiran } from './actions';
 import toast, { Toaster } from 'react-hot-toast';
 import { format } from 'date-fns';
@@ -180,7 +181,7 @@ export default function KetidakhadiranClient({ data }: { data: KetidakhadiranDat
                 <div className="bg-slate-100 rounded-2xl flex-1 min-h-[300px] flex items-center justify-center overflow-hidden border border-slate-200">
                   {detailModal.file ? (
                     <img 
-                      src={`/uploads/ketidakhadiran/${detailModal.file}`} 
+                      src={getImageUrl('ketidakhadiran', detailModal.file)} 
                       alt="Bukti Ketidakhadiran" 
                       className="max-w-full max-h-[400px] object-contain hover:scale-110 transition-transform duration-300"
                       onError={(e) => {
@@ -195,7 +196,7 @@ export default function KetidakhadiranClient({ data }: { data: KetidakhadiranDat
                   )}
                 </div>
                 {detailModal.file && (
-                  <a href={`/uploads/ketidakhadiran/${detailModal.file}`} target="_blank" className="text-center text-xs text-blue-600 hover:underline mt-2 font-medium">Buka gambar di tab baru</a>
+                  <a href={getImageUrl('ketidakhadiran', detailModal.file)} target="_blank" className="text-center text-xs text-blue-600 hover:underline mt-2 font-medium">Buka gambar di tab baru</a>
                 )}
               </div>
 

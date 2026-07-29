@@ -2,7 +2,8 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { LogOut, User, MapPin } from 'lucide-react';
+import { LogOut, Home, CalendarX, User, Calendar as CalendarIcon, FileClock } from 'lucide-react';
+import { getImageUrl } from '@/lib/getImageUrl';
 
 export default async function PegawaiLayout({
   children,
@@ -42,7 +43,7 @@ export default async function PegawaiLayout({
                 
                 <div className="w-10 h-10 rounded-full bg-slate-200 overflow-hidden border-2 border-emerald-500 flex items-center justify-center">
                   {session.user.foto && session.user.foto !== 'default.jpg' ? (
-                    <img src={`/uploads/pegawai/${session.user.foto}`} alt="Foto" className="w-full h-full object-cover" />
+                    <img src={getImageUrl('pegawai', session.user.foto)} alt="Foto" className="w-full h-full object-cover" />
                   ) : (
                     <User className="w-6 h-6 text-slate-400" />
                   )}

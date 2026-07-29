@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { getImageUrl } from '@/lib/getImageUrl';
 import { User, Briefcase, MapPin, Phone, Edit3, Key, Loader2, Image as ImageIcon, Home } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 import { updatePassword } from '@/app/actions/profile';
@@ -53,7 +54,7 @@ export default function ProfileClient({ user }: ProfileClientProps) {
               {/* Foto Profil */}
               <div className="absolute -top-16 left-8 p-1 bg-white rounded-full">
                 {user.foto && user.foto !== 'default.jpg' ? (
-                  <img src={`/uploads/pegawai/${user.foto}`} alt={user.nama} className="w-24 h-24 rounded-full object-cover border-4 border-slate-50" />
+                  <img src={getImageUrl('pegawai', user.foto)} alt={user.nama} className="w-24 h-24 rounded-full object-cover border-4 border-slate-50" />
                 ) : (
                   <div className="w-24 h-24 rounded-full bg-slate-100 flex items-center justify-center border-4 border-white text-slate-400">
                     <ImageIcon className="w-10 h-10" />

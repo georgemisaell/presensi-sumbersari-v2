@@ -5,9 +5,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
 import bcrypt from 'bcryptjs';
-import { writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
-import { existsSync } from 'fs';
+import { uploadToSupabase } from '@/lib/supabase';
 
 export async function addPegawai(data: FormData) {
   try {
@@ -45,15 +43,9 @@ export async function addPegawai(data: FormData) {
       const bytes = await foto.arrayBuffer();
       const buffer = Buffer.from(bytes);
       
-      const uploadDir = join(process.cwd(), 'public', 'uploads', 'pegawai');
-      if (!existsSync(uploadDir)) {
-        await mkdir(uploadDir, { recursive: true });
-      }
-
       const ext = foto.name.split('.').pop() || 'jpg';
       nama_file = `${nipBaru}_${Date.now()}.${ext}`;
-      const path = join(uploadDir, nama_file);
-      await writeFile(path, buffer);
+      const publicUrl = await uploadToSupabase(buffer, nama_file, 'pegawai');
     }
 
     // Hash Password
@@ -136,15 +128,9 @@ export async function updatePegawai(id: number, data: FormData) {
       const bytes = await foto.arrayBuffer();
       const buffer = Buffer.from(bytes);
       
-      const uploadDir = join(process.cwd(), 'public', 'uploads', 'pegawai');
-      if (!existsSync(uploadDir)) {
-        await mkdir(uploadDir, { recursive: true });
-      }
-
       const ext = foto.name.split('.').pop() || 'jpg';
       nama_file = `${pegawaiLama.nip}_${Date.now()}.${ext}`;
-      const path = join(uploadDir, nama_file);
-      await writeFile(path, buffer);
+      const publicUrl = await uploadToSupabase(buffer, nama_file, 'pegawai');
     }
 
     await prisma.$transaction(async (tx) => {
