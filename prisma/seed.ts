@@ -16,12 +16,12 @@ async function main() {
   // --- Seed Admin ---
   const adminPegawai = await prisma.pegawai.create({
     data: {
-      nip: '000000001',
+      nip: 'PEG-0001',
       nama: 'Administrator',
       jenis_kelamin: 'Laki-laki',
       alamat: 'Kantor Pusat',
       no_handphone: '081234567890',
-      jabatan: 'Admin Sistem',
+      jabatan: 'Karyawan Desa',
       lokasi_presensi: 'Kantor Pusat',
       foto: 'default.jpg',
     },
@@ -32,8 +32,8 @@ async function main() {
       id_pegawai: adminPegawai.id,
       username: 'admin',
       password: passwordHash,
-      status: 'aktif',
-      role: 'admin',
+      status: 'Aktif',
+      role: 'Admin',
     },
   });
   console.log('Admin account created: username: admin, password: admin123');
@@ -41,12 +41,12 @@ async function main() {
   // --- Seed Pegawai ---
   const pegawai = await prisma.pegawai.create({
     data: {
-      nip: '111111111',
-      nama: 'Pegawai Contoh',
+      nip: 'PEG-0002',
+      nama: 'Pegawai',
       jenis_kelamin: 'Laki-laki',
-      alamat: 'Alamat Pegawai',
+      alamat: 'Desa Sumbersari',
       no_handphone: '081234567891',
-      jabatan: 'Staf',
+      jabatan: 'Karyawan Desa',
       lokasi_presensi: 'Kantor Pusat',
       foto: 'default.jpg',
     },
@@ -57,8 +57,8 @@ async function main() {
       id_pegawai: pegawai.id,
       username: 'pegawai',
       password: passwordHash,
-      status: 'aktif',
-      role: 'pegawai',
+      status: 'Aktif',
+      role: 'Pegawai',
     },
   });
   console.log('Pegawai account created: username: pegawai, password: admin123');

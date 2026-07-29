@@ -120,7 +120,7 @@ export default function RekapClient({ data, initialMulai, initialSampai }: { dat
             <tbody>
               {data.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="p-8 text-center text-slate-400">
+                  <td colSpan={10} className="p-8 text-center text-slate-400">
                     Tidak ada rekaman absensi pada periode ini.
                   </td>
                 </tr>
