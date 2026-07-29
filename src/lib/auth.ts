@@ -38,11 +38,15 @@ export const authOptions: NextAuthOptions = {
         return {
           id: user.id.toString(),
           role: user.role,
+          username: user.username,
           nama: user.pegawai.nama,
           nip: user.pegawai.nip,
           jabatan: user.pegawai.jabatan,
           lokasi_presensi: user.pegawai.lokasi_presensi,
           foto: user.pegawai.foto,
+          jenis_kelamin: user.pegawai.jenis_kelamin,
+          alamat: user.pegawai.alamat,
+          no_handphone: user.pegawai.no_handphone,
         };
       },
     }),
@@ -52,11 +56,15 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id;
         token.role = user.role;
+        token.username = user.username;
         token.nama = user.nama;
         token.nip = user.nip;
         token.jabatan = user.jabatan;
         token.lokasi_presensi = user.lokasi_presensi;
         token.foto = user.foto;
+        token.jenis_kelamin = user.jenis_kelamin;
+        token.alamat = user.alamat;
+        token.no_handphone = user.no_handphone;
       }
       return token;
     },
@@ -64,11 +72,15 @@ export const authOptions: NextAuthOptions = {
       if (token && session.user) {
         session.user.id = token.id;
         session.user.role = token.role;
+        session.user.username = token.username;
         session.user.nama = token.nama;
         session.user.nip = token.nip;
         session.user.jabatan = token.jabatan;
         session.user.lokasi_presensi = token.lokasi_presensi;
         session.user.foto = token.foto;
+        session.user.jenis_kelamin = token.jenis_kelamin;
+        session.user.alamat = token.alamat;
+        session.user.no_handphone = token.no_handphone;
       }
       return session;
     },

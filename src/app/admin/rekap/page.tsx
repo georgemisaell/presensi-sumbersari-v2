@@ -2,6 +2,9 @@ import prisma from '@/lib/prisma';
 import RekapClient, { RekapData } from './RekapClient';
 import { format } from 'date-fns';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function RekapPage({
   searchParams
 }: {
@@ -38,7 +41,7 @@ export default async function RekapPage({
     where: {
       id: { in: idPegawaiList }
     },
-    select: { id: true, nama: true, nip: true }
+    select: { id: true, nama: true, nip: true, lokasi_presensi: true }
   });
 
   const pegawaiMap = new Map(pegawaiList.map(p => [p.id, p]));
@@ -50,19 +53,26 @@ export default async function RekapPage({
     const peg = pegawaiMap.get(item.id_pegawai);
     const lokasi = peg ? lokasiMap.get(peg.lokasi_presensi) : null;
 
-    const jamMasukStr = item.jam_masuk.toISOString().substring(11, 19);
-    const jamKeluarStr = item.jam_keluar ? item.jam_keluar.toISOString().substring(11, 19) : null;
+    const jamMasukStr = item.jam_masuk.toISOString();
+    const jamKeluarStr = item.jam_keluar ? item.jam_keluar.toISOString() : null;
 
     let total_terlambat = 0;
     let status = 'Hadir';
 
     if (lokasi) {
-      const actualMasukMs = item.jam_masuk.getTime();
-      const targetMasukMs = lokasi.jam_masuk.getTime();
-      const diffMinutes = Math.floor((actualMasukMs - targetMasukMs) / 60000);
+      let offsetHours = 7;
+      if (lokasi.zona_waktu === 'WITA') offsetHours = 8;
+      if (lokasi.zona_waktu === 'WIT') offsetHours = 9;
+
+      const actualMins = (item.jam_masuk.getUTCHours() + offsetHours) * 60 + item.jam_masuk.getUTCMinutes();
+      const targetMins = lokasi.jam_masuk.getUTCHours() * 60 + lokasi.jam_masuk.getUTCMinutes();
+      
+      const diffMinutes = actualMins - targetMins;
       if (diffMinutes > 0) {
         total_terlambat = diffMinutes;
         status = 'Terlambat';
+      } else {
+        status = `Hadir (a=${actualMins}, t=${targetMins})`;
       }
     }
 

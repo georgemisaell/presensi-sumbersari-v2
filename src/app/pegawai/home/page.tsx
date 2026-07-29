@@ -4,6 +4,8 @@ import prisma from '@/lib/prisma';
 import DashboardClient from './DashboardClient';
 import { redirect } from 'next/navigation';
 
+export const dynamic = 'force-dynamic';
+
 export default async function PegawaiHomePage() {
   const session = await getServerSession(authOptions);
   
@@ -35,16 +37,34 @@ export default async function PegawaiHomePage() {
   const today = new Date();
   const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
   const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+  const todayUTC = new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()));
 
   const presensiHariIni = await prisma.presensi.findFirst({
     where: {
       id_pegawai: idPegawai,
-      tanggal_masuk: {
-        gte: startOfDay,
-        lt: endOfDay
-      }
+      OR: [
+        {
+          tanggal_masuk: {
+            gte: startOfDay,
+            lt: endOfDay
+          }
+        },
+        {
+          tanggal_masuk: todayUTC
+        }
+      ]
+    },
+    orderBy: {
+      id: 'desc'
     }
   });
+
+
+  const formatTimeHHMM = (d: Date) => {
+    const h = String(d.getUTCHours()).padStart(2, '0');
+    const m = String(d.getUTCMinutes()).padStart(2, '0');
+    return `${h}:${m}`;
+  };
 
   return (
     <DashboardClient 
@@ -53,7 +73,7 @@ export default async function PegawaiHomePage() {
         lng: parseFloat(lokasi.longitude),
         radius: lokasi.radius,
         nama: lokasi.nama_lokasi,
-        jam_pulang: lokasi.jam_pulang.toISOString()
+        jam_pulang: formatTimeHHMM(lokasi.jam_pulang)
       }}
       presensi={presensiHariIni ? {
         id: presensiHariIni.id,
@@ -63,3 +83,4 @@ export default async function PegawaiHomePage() {
     />
   );
 }
+

@@ -136,7 +136,7 @@ export default function RekapClient({ data, initialMulai, initialSampai }: { dat
                       <div className="font-medium text-slate-700">{format(new Date(item.tanggal_masuk), 'dd/MM/yyyy')}</div>
                     </td>
                     <td className="p-4 text-center">
-                      <span className="bg-emerald-50 text-emerald-700 px-2 py-1 rounded font-mono text-sm border border-emerald-100">{item.jam_masuk}</span>
+                      <span className="bg-emerald-50 text-emerald-700 px-2 py-1 rounded font-mono text-sm border border-emerald-100">{format(new Date(item.jam_masuk), 'HH:mm:ss')}</span>
                     </td>
                     <td className="p-4 text-center">
                       {item.foto_masuk ? (
@@ -149,7 +149,7 @@ export default function RekapClient({ data, initialMulai, initialSampai }: { dat
                     </td>
                     <td className="p-4 text-center">
                       {item.jam_keluar ? (
-                        <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded font-mono text-sm border border-blue-100">{item.jam_keluar}</span>
+                        <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded font-mono text-sm border border-blue-100">{format(new Date(item.jam_keluar), 'HH:mm:ss')}</span>
                       ) : (
                         <span className="text-slate-400 italic text-sm">-</span>
                       )}

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { User, Briefcase, MapPin, Phone, Edit3, Key, Loader2, Image as ImageIcon } from 'lucide-react';
+import { User, Briefcase, MapPin, Phone, Edit3, Key, Loader2, Image as ImageIcon, Home } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 import { updatePassword } from '@/app/actions/profile';
 
@@ -16,7 +16,7 @@ export default function ProfileClient({ user }: ProfileClientProps) {
     e.preventDefault();
     setIsLoading(true);
     const formData = new FormData(e.currentTarget);
-    
+
     try {
       const res = await updatePassword(formData);
       if (res.success) {
@@ -35,21 +35,21 @@ export default function ProfileClient({ user }: ProfileClientProps) {
   return (
     <div className="max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
       <Toaster position="top-right" />
-      
+
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-slate-800">Profil Saya</h1>
         <p className="text-slate-500">Lihat informasi biodata Anda dan ubah password akun.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
+
         {/* Kolom Kiri: Biodata */}
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden relative">
             {/* Header / Cover */}
             <div className="h-32 bg-gradient-to-r from-blue-500 to-indigo-600"></div>
-            
-            <div className="px-8 pb-8 relative">
+
+            <div className="px-8 pb-8 pt-16 relative">
               {/* Foto Profil */}
               <div className="absolute -top-16 left-8 p-1 bg-white rounded-full">
                 {user.foto && user.foto !== 'default.jpg' ? (
@@ -60,12 +60,13 @@ export default function ProfileClient({ user }: ProfileClientProps) {
                   </div>
                 )}
               </div>
-              
-              <div className="mt-12">
+
+              <div>
                 <h2 className="text-2xl font-bold text-slate-800">{user.nama}</h2>
-                <div className="flex items-center gap-2 text-slate-500 font-medium mt-1">
+                <div className="flex flex-wrap items-center gap-2 text-slate-500 font-medium mt-1">
+                  <span className="bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-md text-sm">@{user.username || 'username'}</span>
                   <span className="bg-blue-50 text-blue-700 px-2.5 py-0.5 rounded-md text-sm">{user.nip}</span>
-                  <span>•</span>
+                  <span className="hidden sm:inline">•</span>
                   <span>{user.role}</span>
                 </div>
               </div>
@@ -80,7 +81,7 @@ export default function ProfileClient({ user }: ProfileClientProps) {
                     <div className="font-semibold text-slate-800">{user.jabatan || '-'}</div>
                   </div>
                 </div>
-                
+
                 <div className="flex gap-4">
                   <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 shrink-0">
                     <MapPin className="w-5 h-5" />
@@ -88,6 +89,36 @@ export default function ProfileClient({ user }: ProfileClientProps) {
                   <div>
                     <div className="text-sm text-slate-500">Lokasi Presensi</div>
                     <div className="font-semibold text-slate-800">{user.lokasi_presensi || '-'}</div>
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 shrink-0">
+                    <Phone className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="text-sm text-slate-500">No. Handphone</div>
+                    <div className="font-semibold text-slate-800">{user.no_handphone || '-'}</div>
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 shrink-0">
+                    <User className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="text-sm text-slate-500">Jenis Kelamin</div>
+                    <div className="font-semibold text-slate-800">{user.jenis_kelamin || '-'}</div>
+                  </div>
+                </div>
+
+                <div className="flex gap-4 md:col-span-2">
+                  <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 shrink-0">
+                    <Home className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="text-sm text-slate-500">Alamat</div>
+                    <div className="font-semibold text-slate-800">{user.alamat || '-'}</div>
                   </div>
                 </div>
               </div>
@@ -112,28 +143,28 @@ export default function ProfileClient({ user }: ProfileClientProps) {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-1">Password Baru</label>
-                <input 
-                  type="password" 
-                  name="password_baru" 
-                  required 
-                  className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-slate-800 transition-all"
-                  placeholder="••••••••"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Ulangi Password Baru</label>
-                <input 
-                  type="password" 
-                  name="ulangi_password_baru" 
-                  required 
+                <input
+                  type="password"
+                  name="password_baru"
+                  required
                   className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-slate-800 transition-all"
                   placeholder="••••••••"
                 />
               </div>
 
-              <button 
-                type="submit" 
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Ulangi Password Baru</label>
+                <input
+                  type="password"
+                  name="ulangi_password_baru"
+                  required
+                  className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-slate-800 transition-all"
+                  placeholder="••••••••"
+                />
+              </div>
+
+              <button
+                type="submit"
                 disabled={isLoading}
                 className="w-full mt-4 flex justify-center items-center py-2.5 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
               >

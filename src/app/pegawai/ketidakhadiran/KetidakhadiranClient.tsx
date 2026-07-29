@@ -117,7 +117,7 @@ export default function PegawaiKetidakhadiranClient({ riwayat }: { riwayat: Riwa
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-1">Jenis Ketidakhadiran</label>
-                <select name="keterangan" required className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-white">
+                <select name="keterangan" required className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-white text-slate-800">
                   <option value="Sakit">Sakit</option>
                   <option value="Izin">Izin</option>
                   <option value="Cuti">Cuti</option>
@@ -126,12 +126,12 @@ export default function PegawaiKetidakhadiranClient({ riwayat }: { riwayat: Riwa
 
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-1">Tanggal</label>
-                <input type="date" name="tanggal" required className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none" />
+                <input type="date" name="tanggal" required className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-white text-slate-800" />
               </div>
 
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-1">Alasan / Deskripsi Lengkap</label>
-                <textarea name="deskripsi" required rows={3} placeholder="Sakit demam berdarah..." className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none"></textarea>
+                <textarea name="deskripsi" required rows={3} placeholder="Sakit demam berdarah..." className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-white text-slate-800"></textarea>
               </div>
 
               <div>
@@ -141,7 +141,7 @@ export default function PegawaiKetidakhadiranClient({ riwayat }: { riwayat: Riwa
                   name="file" 
                   accept="image/*" 
                   required 
-                  className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-slate-50 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-100 file:text-emerald-700 hover:file:bg-emerald-200"
+                  className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-slate-50 text-slate-800 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-100 file:text-emerald-700 hover:file:bg-emerald-200"
                 />
               </div>
 

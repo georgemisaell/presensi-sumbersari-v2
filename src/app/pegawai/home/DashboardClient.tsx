@@ -88,17 +88,17 @@ export default function DashboardClient({ lokasi, presensi }: DashboardClientPro
   };
 
   const isSudahWaktuPulang = () => {
-    const jamPulang = new Date(lokasi.jam_pulang);
-    // Extract hours and minutes from UTC time if db time is stored loosely,
-    // actually Prisma returns UTC DateTime for Time field. 
-    // It's safer to compare just the HH:MM
+    if (!lokasi.jam_pulang) return true;
+    const parts = lokasi.jam_pulang.split(':');
+    const pulangH = parseInt(parts[0], 10);
+    const pulangM = parseInt(parts[1], 10);
+    
     const currentH = time.getHours();
     const currentM = time.getMinutes();
-    const pulangH = jamPulang.getUTCHours();
-    const pulangM = jamPulang.getUTCMinutes();
     
     return currentH > pulangH || (currentH === pulangH && currentM >= pulangM);
   };
+
 
   return (
     <div className="flex flex-col gap-8">
@@ -179,7 +179,7 @@ export default function DashboardClient({ lokasi, presensi }: DashboardClientPro
                   <span className="text-2xl font-bold text-amber-500">⏳</span>
                 </div>
                 <p className="text-amber-600 font-medium">Belum waktunya pulang</p>
-                <p className="text-slate-500 text-sm mt-1">Jam pulang: {format(new Date(lokasi.jam_pulang), 'HH:mm')}</p>
+                <p className="text-slate-500 text-sm mt-1">Jam pulang: {lokasi.jam_pulang} WIB</p>
               </div>
             ) : (
               <div className="w-full text-center">
