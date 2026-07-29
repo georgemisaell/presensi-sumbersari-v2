@@ -161,8 +161,8 @@ export default function JabatanClient({ data }: { data: JabatanData[] }) {
                   name="jabatan"
                   required
                   defaultValue={editData?.jabatan || ''}
-                  placeholder="Contoh: Staff IT"
-                  className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                  placeholder="Contoh: Karyawan Desa"
+                  className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder:text-slate-400 text-slate-800"
                 />
               </div>
 
