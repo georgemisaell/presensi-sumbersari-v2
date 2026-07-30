@@ -2,10 +2,12 @@
 
 import React, { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Search, Download, Calendar, Filter } from 'lucide-react';
+import { Search, Download, Calendar, Filter, Loader2 } from 'lucide-react';
 import { getImageUrl } from '@/lib/getImageUrl';
 import { format } from 'date-fns';
 import { id as idLocale } from 'date-fns/locale';
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 export interface RekapData {
   id: number;
@@ -27,15 +29,121 @@ export default function RekapClient({ data, initialMulai, initialSampai }: { dat
   
   const [mulai, setMulai] = useState(initialMulai);
   const [sampai, setSampai] = useState(initialSampai);
+  const [isExporting, setIsExporting] = useState(false);
 
   const handleFilter = (e: React.FormEvent) => {
     e.preventDefault();
     router.push(`/admin/rekap?mulai=${mulai}&sampai=${sampai}`);
   };
 
-  const handleCetak = () => {
-    // Di masa depan bisa trigger Print Window atau generate PDF/Excel
-    window.print();
+  const fetchImageAsBuffer = async (url: string) => {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) return null;
+      const arrayBuffer = await response.arrayBuffer();
+      return arrayBuffer;
+    } catch (error) {
+      console.error("Gagal mendownload gambar", url, error);
+      return null;
+    }
+  };
+
+  const handleExportExcel = async () => {
+    if (data.length === 0) {
+      alert("Tidak ada data untuk diekspor");
+      return;
+    }
+
+    try {
+      setIsExporting(true);
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet('Rekap Absensi');
+
+      // Add Headers
+      worksheet.columns = [
+        { header: 'No', key: 'no', width: 5 },
+        { header: 'Nama Pegawai', key: 'nama', width: 25 },
+        { header: 'NIP', key: 'nip', width: 20 },
+        { header: 'Tanggal', key: 'tanggal', width: 15 },
+        { header: 'Jam Masuk', key: 'jam_masuk', width: 15 },
+        { header: 'Foto Masuk', key: 'foto_masuk', width: 15 }, // Kolom untuk gambar
+        { header: 'Jam Keluar', key: 'jam_keluar', width: 15 },
+        { header: 'Foto Keluar', key: 'foto_keluar', width: 15 }, // Kolom untuk gambar
+        { header: 'Total Jam', key: 'total_jam', width: 15 },
+        { header: 'Keterlambatan (Menit)', key: 'keterlambat', width: 22 },
+        { header: 'Status', key: 'status', width: 25 },
+      ];
+
+      // Style Headers
+      worksheet.getRow(1).font = { bold: true };
+      worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
+
+      for (let i = 0; i < data.length; i++) {
+        const item = data[i];
+        const rowIndex = i + 2; // +1 karena header, +1 karena excel 1-based index
+
+        worksheet.addRow({
+          no: i + 1,
+          nama: item.nama,
+          nip: item.nip,
+          tanggal: format(new Date(item.tanggal_masuk), 'dd/MM/yyyy'),
+          jam_masuk: format(new Date(item.jam_masuk), 'HH:mm:ss'),
+          foto_masuk: '', // Kosongkan text, akan diisi gambar
+          jam_keluar: item.jam_keluar ? format(new Date(item.jam_keluar), 'HH:mm:ss') : '-',
+          foto_keluar: '', // Kosongkan text
+          total_jam: item.total_jam || '-',
+          keterlambat: item.total_terlambat,
+          status: item.status
+        });
+
+        // Set alignment untuk baris data
+        worksheet.getRow(rowIndex).alignment = { vertical: 'middle' };
+
+        // Proses Foto Masuk
+        if (item.foto_masuk) {
+          const buffer = await fetchImageAsBuffer(getImageUrl('presensi', item.foto_masuk));
+          if (buffer) {
+            const imageId = workbook.addImage({
+              buffer: buffer,
+              extension: 'jpeg',
+            });
+            worksheet.addImage(imageId, {
+              tl: { col: 5, row: rowIndex - 1 }, // Col 5 = Foto Masuk (0-indexed col), row (0-indexed)
+              ext: { width: 80, height: 80 }
+            });
+            worksheet.getRow(rowIndex).height = 65; // Menyesuaikan tinggi baris
+          }
+        }
+
+        // Proses Foto Keluar
+        if (item.foto_keluar) {
+          const buffer = await fetchImageAsBuffer(getImageUrl('presensi', item.foto_keluar));
+          if (buffer) {
+            const imageId = workbook.addImage({
+              buffer: buffer,
+              extension: 'jpeg',
+            });
+            worksheet.addImage(imageId, {
+              tl: { col: 7, row: rowIndex - 1 }, // Col 7 = Foto Keluar
+              ext: { width: 80, height: 80 }
+            });
+            if (worksheet.getRow(rowIndex).height < 65) {
+              worksheet.getRow(rowIndex).height = 65;
+            }
+          }
+        }
+      }
+
+      const buffer = await workbook.xlsx.writeBuffer();
+      const fileName = `Rekap_Absensi_${mulai}_sd_${sampai}.xlsx`;
+      saveAs(new Blob([buffer]), fileName);
+
+    } catch (error) {
+      console.error("Export Error:", error);
+      alert("Terjadi kesalahan saat mengekspor Excel.");
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   return (
@@ -46,11 +154,12 @@ export default function RekapClient({ data, initialMulai, initialSampai }: { dat
           <p className="text-slate-500">Laporan data kehadiran pegawai berdasarkan periode waktu.</p>
         </div>
         <button 
-          onClick={handleCetak}
-          className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl flex items-center gap-2 shadow-sm shadow-emerald-600/20 transition-all active:scale-95 font-medium shrink-0"
+          onClick={handleExportExcel}
+          disabled={isExporting}
+          className="bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-400 text-white px-4 py-2 rounded-xl flex items-center gap-2 shadow-sm shadow-emerald-600/20 transition-all active:scale-95 font-medium shrink-0"
         >
-          <Download className="w-5 h-5" />
-          Cetak / Ekspor
+          {isExporting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Download className="w-5 h-5" />}
+          {isExporting ? "Memproses..." : "Ekspor Excel"}
         </button>
       </div>
 
