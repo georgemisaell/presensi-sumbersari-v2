@@ -8,17 +8,20 @@ export const revalidate = 0;
 export default async function RekapPage({
   searchParams
 }: {
-  searchParams: { mulai?: string; sampai?: string };
+  searchParams: Promise<{ mulai?: string; sampai?: string }>;
 }) {
+  const resolvedParams = await searchParams;
   const today = new Date();
   
   // Default filter: Tanggal hari ini s.d. hari ini
-  const filterMulai = searchParams.mulai || format(today, 'yyyy-MM-dd');
-  const filterSampai = searchParams.sampai || format(today, 'yyyy-MM-dd');
+  const filterMulai = resolvedParams.mulai || format(today, 'yyyy-MM-dd');
+  const filterSampai = resolvedParams.sampai || format(today, 'yyyy-MM-dd');
 
+  // Kita gunakan timezone Indonesia/WIB (UTC+7) sebagai standar pencarian jam_masuk.
+  // Jika server berjalan di UTC, `new Date("YYYY-MM-DD")` seringkali bermasalah dalam query tanggal lokal.
   const startDate = new Date(filterMulai);
   const endDate = new Date(filterSampai);
-  // Add 1 day to end date to include the entire day
+  // Tambah 1 hari ke endDate agar mencakup seluruh hari tersebut
   const endDatePlusOne = new Date(endDate);
   endDatePlusOne.setDate(endDatePlusOne.getDate() + 1);
 

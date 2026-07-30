@@ -15,7 +15,9 @@ export async function submitPresensiMasuk(base64Image: string) {
 
     const idPegawai = parseInt(session.user.id);
     const today = new Date();
-    const todayUTC = new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()));
+    // Gunakan offset +7 (WIB) agar tanggal yang disimpan tidak mundur jika server menggunakan UTC
+    const wibTime = new Date(today.getTime() + (7 * 60 * 60 * 1000));
+    const todayUTC = new Date(Date.UTC(wibTime.getUTCFullYear(), wibTime.getUTCMonth(), wibTime.getUTCDate()));
     
     // Check if already checked in today
     const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
@@ -78,7 +80,9 @@ export async function submitPresensiKeluar(base64Image: string, idPresensi: numb
 
     const idPegawai = parseInt(session.user.id);
     const today = new Date();
-    const todayUTC = new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()));
+    // Gunakan offset +7 (WIB) agar tanggal yang disimpan tidak mundur jika server menggunakan UTC
+    const wibTime = new Date(today.getTime() + (7 * 60 * 60 * 1000));
+    const todayUTC = new Date(Date.UTC(wibTime.getUTCFullYear(), wibTime.getUTCMonth(), wibTime.getUTCDate()));
     
     // Process image
     const base64Data = base64Image.replace(/^data:image\/\w+;base64,/, '');

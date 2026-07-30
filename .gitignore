@@ -4,6 +4,7 @@
 .windsurf/
 .agents/
 .claude/
+.gemini/
 
 # dependencies
 /node_modules
