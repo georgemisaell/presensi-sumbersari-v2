@@ -16,10 +16,8 @@ export default async function AdminHomePage() {
   }
 
   const today = new Date();
-  const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
-
-  const todayUTC = new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()));
+  const todayWIB = new Date(today.getTime() + (7 * 60 * 60 * 1000));
+  const todayUTC = new Date(Date.UTC(todayWIB.getUTCFullYear(), todayWIB.getUTCMonth(), todayWIB.getUTCDate()));
 
   // 1. Total Pegawai Aktif
   const totalPegawaiAktif = await prisma.users.count({
@@ -33,17 +31,7 @@ export default async function AdminHomePage() {
   // Group by doesn't support count distinct easily in Prisma, but since presensi is 1 per day per user typically:
   const presensiHadir = await prisma.presensi.findMany({
     where: {
-      OR: [
-        {
-          tanggal_masuk: {
-            gte: startOfDay,
-            lt: endOfDay
-          }
-        },
-        {
-          tanggal_masuk: todayUTC
-        }
-      ]
+      tanggal_masuk: todayUTC
     },
     select: {
       id_pegawai: true
@@ -55,17 +43,7 @@ export default async function AdminHomePage() {
   // 3. Jumlah Sakit, Izin & Cuti
   const ketidakhadiran = await prisma.ketidakhadiran.findMany({
     where: {
-      OR: [
-        {
-          tanggal: {
-            gte: startOfDay,
-            lt: endOfDay
-          }
-        },
-        {
-          tanggal: todayUTC
-        }
-      ],
+      tanggal: todayUTC,
       status_pengajuan: 'Approved' // Asumsi hanya yang disetujui yang dihitung, atau jika tidak ada asumsi, kita hapus status_pengajuan
     },
     select: {

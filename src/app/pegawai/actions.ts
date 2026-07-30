@@ -20,23 +20,10 @@ export async function submitPresensiMasuk(base64Image: string) {
     const todayUTC = new Date(Date.UTC(wibTime.getUTCFullYear(), wibTime.getUTCMonth(), wibTime.getUTCDate()));
     
     // Check if already checked in today
-    const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
-    
     const existing = await prisma.presensi.findFirst({
       where: {
         id_pegawai: idPegawai,
-        OR: [
-          {
-            tanggal_masuk: {
-              gte: startOfDay,
-              lt: endOfDay
-            }
-          },
-          {
-            tanggal_masuk: todayUTC
-          }
-        ]
+        tanggal_masuk: todayUTC
       }
     });
 

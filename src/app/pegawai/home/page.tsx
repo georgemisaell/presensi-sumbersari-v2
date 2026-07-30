@@ -33,26 +33,15 @@ export default async function PegawaiHomePage() {
     return <div>Lokasi presensi kantor tidak ditemukan. Hubungi admin.</div>;
   }
 
-  // Check presensi for today
+  // Check presensi for today using reliable WIB (UTC+7) logic
   const today = new Date();
-  const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
-  const todayUTC = new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()));
+  const todayWIB = new Date(today.getTime() + (7 * 60 * 60 * 1000));
+  const todayUTC = new Date(Date.UTC(todayWIB.getUTCFullYear(), todayWIB.getUTCMonth(), todayWIB.getUTCDate()));
 
   const presensiHariIni = await prisma.presensi.findFirst({
     where: {
       id_pegawai: idPegawai,
-      OR: [
-        {
-          tanggal_masuk: {
-            gte: startOfDay,
-            lt: endOfDay
-          }
-        },
-        {
-          tanggal_masuk: todayUTC
-        }
-      ]
+      tanggal_masuk: todayUTC
     },
     orderBy: {
       id: 'desc'
