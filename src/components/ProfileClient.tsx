@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { getImageUrl } from '@/lib/getImageUrl';
-import { User, Briefcase, MapPin, Phone, Edit3, Key, Loader2, Image as ImageIcon, Home } from 'lucide-react';
+import { User, Briefcase, MapPin, Phone, Edit3, Key, Loader2, Image as ImageIcon, Home, Eye, EyeOff } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 import { updatePassword } from '@/app/actions/profile';
 
@@ -12,6 +12,8 @@ interface ProfileClientProps {
 
 export default function ProfileClient({ user }: ProfileClientProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showUlangiPassword, setShowUlangiPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -144,24 +146,42 @@ export default function ProfileClient({ user }: ProfileClientProps) {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-1">Password Baru</label>
-                <input
-                  type="password"
-                  name="password_baru"
-                  required
-                  className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-slate-800 transition-all"
-                  placeholder="••••••••"
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password_baru"
+                    required
+                    className="w-full pl-4 pr-10 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-slate-800 transition-all"
+                    placeholder="••••••••"
+                  />
+                  <button 
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
               </div>
 
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-1">Ulangi Password Baru</label>
-                <input
-                  type="password"
-                  name="ulangi_password_baru"
-                  required
-                  className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-slate-800 transition-all"
-                  placeholder="••••••••"
-                />
+                <div className="relative">
+                  <input
+                    type={showUlangiPassword ? "text" : "password"}
+                    name="ulangi_password_baru"
+                    required
+                    className="w-full pl-4 pr-10 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-slate-800 transition-all"
+                    placeholder="••••••••"
+                  />
+                  <button 
+                    type="button"
+                    onClick={() => setShowUlangiPassword(!showUlangiPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                  >
+                    {showUlangiPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
               </div>
 
               <button

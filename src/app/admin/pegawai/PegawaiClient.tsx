@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Plus, Trash2, X, Users, Image as ImageIcon, Edit2 } from 'lucide-react';
+import { Plus, Trash2, X, Users, Image as ImageIcon, Edit2, Eye, EyeOff } from 'lucide-react';
 import { getImageUrl } from '@/lib/getImageUrl';
 import { addPegawai, deletePegawai, updatePegawai } from './actions';
 import toast, { Toaster } from 'react-hot-toast';
@@ -33,15 +33,22 @@ export default function PegawaiClient({ data, listJabatan, listLokasi }: Pegawai
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [editData, setEditData] = useState<PegawaiData | null>(null);
+  
+  const [showPassword, setShowPassword] = useState(false);
+  const [showUlangiPassword, setShowUlangiPassword] = useState(false);
 
   const openAddModal = () => {
     setEditData(null);
     setIsModalOpen(true);
+    setShowPassword(false);
+    setShowUlangiPassword(false);
   };
 
   const openEditModal = (item: PegawaiData) => {
     setEditData(item);
     setIsModalOpen(true);
+    setShowPassword(false);
+    setShowUlangiPassword(false);
   };
 
   const closeModal = () => {
@@ -280,11 +287,29 @@ export default function PegawaiClient({ data, listJabatan, listLokasi }: Pegawai
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-semibold text-emerald-900 mb-1">Password {editData && '(Kosong = Tetap)'}</label>
-                        <input type="password" name="password" required={!editData} className="w-full px-4 py-2 border border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-emerald-900 font-medium" />
+                        <div className="relative">
+                          <input type={showPassword ? "text" : "password"} name="password" required={!editData} className="w-full pl-4 pr-10 py-2 border border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-emerald-900 font-medium" />
+                          <button 
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-emerald-600 hover:text-emerald-800 transition-colors"
+                          >
+                            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                          </button>
+                        </div>
                       </div>
                       <div>
                         <label className="block text-sm font-semibold text-emerald-900 mb-1">Ulangi Password</label>
-                        <input type="password" name="ulangi_password" required={!editData} className="w-full px-4 py-2 border border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-emerald-900 font-medium" />
+                        <div className="relative">
+                          <input type={showUlangiPassword ? "text" : "password"} name="ulangi_password" required={!editData} className="w-full pl-4 pr-10 py-2 border border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-emerald-900 font-medium" />
+                          <button 
+                            type="button"
+                            onClick={() => setShowUlangiPassword(!showUlangiPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-emerald-600 hover:text-emerald-800 transition-colors"
+                          >
+                            {showUlangiPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                          </button>
+                        </div>
                       </div>
                     </div>
 
