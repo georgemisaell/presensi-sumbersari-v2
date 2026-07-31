@@ -70,7 +70,6 @@ export default function RekapClient({ data, initialMulai, initialSampai }: { dat
         { header: 'Jam Keluar', key: 'jam_keluar', width: 15 },
         { header: 'Foto Keluar', key: 'foto_keluar', width: 15 }, // Kolom untuk gambar
         { header: 'Total Jam', key: 'total_jam', width: 15 },
-        { header: 'Keterlambatan (Menit)', key: 'keterlambat', width: 22 },
         { header: 'Status', key: 'status', width: 25 },
       ];
 
@@ -92,12 +91,21 @@ export default function RekapClient({ data, initialMulai, initialSampai }: { dat
           jam_keluar: item.jam_keluar ? format(new Date(item.jam_keluar), 'HH:mm:ss') : '-',
           foto_keluar: '', // Kosongkan text
           total_jam: item.total_jam || '-',
-          keterlambat: item.total_terlambat,
           status: item.status
         });
 
         // Set alignment untuk baris data
         worksheet.getRow(rowIndex).alignment = { vertical: 'middle' };
+
+        // Ubah warna tulisan menjadi merah khusus untuk Jam Masuk jika terlambat
+        if (item.status.includes('Terlambat')) {
+          worksheet.getCell(`E${rowIndex}`).font = { color: { argb: 'FFFF0000' } };
+        }
+
+        // Ubah warna tulisan menjadi merah khusus untuk Jam Keluar jika pulang duluan
+        if (item.status.includes('Pulang Duluan')) {
+          worksheet.getCell(`G${rowIndex}`).font = { color: { argb: 'FFFF0000' } };
+        }
 
         // Proses Foto Masuk
         if (item.foto_masuk) {

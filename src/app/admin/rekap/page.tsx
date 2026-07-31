@@ -75,7 +75,20 @@ export default async function RekapPage({
         total_terlambat = diffMinutes;
         status = 'Terlambat';
       } else {
-        status = `Hadir (a=${actualMins}, t=${targetMins})`;
+        status = 'Hadir';
+      }
+
+      if (item.jam_keluar) {
+        const actualOutMins = (item.jam_keluar.getUTCHours() + offsetHours) * 60 + item.jam_keluar.getUTCMinutes();
+        const targetOutMins = lokasi.jam_pulang.getUTCHours() * 60 + lokasi.jam_pulang.getUTCMinutes();
+        
+        if (actualOutMins < targetOutMins) {
+           if (status === 'Terlambat') {
+              status = 'Terlambat & Pulang Duluan';
+           } else {
+              status = 'Pulang Duluan';
+           }
+        }
       }
     }
 
