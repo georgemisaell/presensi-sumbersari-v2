@@ -36,6 +36,7 @@ export default function PresensiCamera({ onCapture }: PresensiCameraProps) {
             ref={webcamRef}
             screenshotFormat="image/jpeg"
             videoConstraints={{ facingMode: "user" }}
+            mirrored={false}
             className="w-full h-full object-cover"
           />
         ) : (
