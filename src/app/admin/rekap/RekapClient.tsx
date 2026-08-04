@@ -12,7 +12,7 @@ import { saveAs } from 'file-saver';
 export interface RekapData {
   id: number;
   nama: string;
-  nip: string;
+  jabatan: string;
   tanggal_masuk: string;
   jam_masuk: string;
   jam_keluar: string | null;
@@ -63,7 +63,7 @@ export default function RekapClient({ data, initialMulai, initialSampai }: { dat
       worksheet.columns = [
         { header: 'No', key: 'no', width: 5 },
         { header: 'Nama Pegawai', key: 'nama', width: 25 },
-        { header: 'NIP', key: 'nip', width: 20 },
+        { header: 'Jabatan', key: 'jabatan', width: 20 },
         { header: 'Tanggal', key: 'tanggal', width: 15 },
         { header: 'Jam Masuk', key: 'jam_masuk', width: 15 },
         { header: 'Foto Masuk', key: 'foto_masuk', width: 15 }, // Kolom untuk gambar
@@ -84,7 +84,7 @@ export default function RekapClient({ data, initialMulai, initialSampai }: { dat
         worksheet.addRow({
           no: i + 1,
           nama: item.nama,
-          nip: item.nip,
+          jabatan: item.jabatan,
           tanggal: format(new Date(item.tanggal_masuk), 'dd/MM/yyyy'),
           jam_masuk: format(new Date(item.jam_masuk), 'HH:mm:ss'),
           foto_masuk: '', // Kosongkan text, akan diisi gambar
@@ -248,7 +248,7 @@ export default function RekapClient({ data, initialMulai, initialSampai }: { dat
                     <td className="p-4 text-center text-slate-500">{index + 1}</td>
                     <td className="p-4">
                       <div className="font-semibold text-slate-800">{item.nama}</div>
-                      <div className="text-xs text-slate-500 font-mono">{item.nip}</div>
+                      <div className="text-xs text-slate-500">{item.jabatan}</div>
                     </td>
                     <td className="p-4 text-center">
                       <div className="font-medium text-slate-700">{format(new Date(item.tanggal_masuk), 'dd/MM/yyyy')}</div>

@@ -44,7 +44,7 @@ export default async function RekapPage({
     where: {
       id: { in: idPegawaiList }
     },
-    select: { id: true, nama: true, nip: true, lokasi_presensi: true }
+    select: { id: true, nama: true, jabatan: true, lokasi_presensi: true }
   });
 
   const pegawaiMap = new Map(pegawaiList.map(p => [p.id, p]));
@@ -104,7 +104,7 @@ export default async function RekapPage({
     return {
       id: item.id,
       nama: peg ? peg.nama : 'Unknown',
-      nip: peg ? peg.nip : '-',
+      jabatan: peg ? peg.jabatan : '-',
       tanggal_masuk: item.tanggal_masuk.toISOString(),
       jam_masuk: jamMasukStr,
       jam_keluar: jamKeluarStr,
